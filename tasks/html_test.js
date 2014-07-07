@@ -9,6 +9,7 @@
 'use strict';
 
 module.exports = function(grunt) {
+  var colors = require('colors');
 
   var htmlTagCheck = function(source){
     var result = [];
@@ -65,20 +66,20 @@ module.exports = function(grunt) {
       return;
     }else{
       this.filesSrc.forEach(function(filepath){
-        grunt.log.writeln('-----------------------------------------------');
+        grunt.log.writeln('');
         var errors = htmlTagCheck(grunt.file.read(filepath));
         if (errors.length===0) {
-          grunt.log.writeln('√ ' + filepath);
+          grunt.log.writeln(('✔ ' + filepath).green);
         } else{
           errorCount++;
-          grunt.log.error('× ' + filepath);
+          grunt.log.error(('✗ ' + filepath).red);
           errors.forEach(function(error){
-            grunt.log.error('Line ' + error.line + ':' + error.full);
+            grunt.log.error(('Line ' + error.line + ':' + error.full).red);
           });
-        };
+        }
       });
     }
-
+    
     if (errorCount > 0) { return false; }
 
   });

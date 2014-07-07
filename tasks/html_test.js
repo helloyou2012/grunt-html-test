@@ -19,7 +19,7 @@ module.exports = function(grunt) {
         if (tagsArray) {
             for (var i = 0; i < tagsArray.length; i++) {
                 if (tagsArray[i].indexOf('</') >= 0) {
-                    elementToPop = tagsArray[i].substr(2, tagsArray[i].length-3);
+                    var elementToPop = tagsArray[i].substr(2, tagsArray[i].length-3);
                     elementToPop = elementToPop.replace(/ /g, '');                                                             
                     for (var j = result.length-1; j >= 0 ; j--) {
                         if (result[j].element == elementToPop) {
@@ -56,16 +56,15 @@ module.exports = function(grunt) {
 
   grunt.registerMultiTask('html_test', 'For html tags check.', function() {
     var options = this.options();
-    var files = this.filesSrc;
     var errorCount = 0;
 
     // check if there are files to test
-    if (this.files.length === 0) {
+    if (this.filesSrc.length === 0) {
       grunt.log.writeln('No files to check...');
       grunt.log.ok();
       return;
     }else{
-      this.files.forEach(function(filepath){
+      this.filesSrc.forEach(function(filepath){
         grunt.log.writeln('-----------------------------------------------');
         var errors = htmlTagCheck(grunt.file.read(filepath));
         if (errors.length===0) {

@@ -10,41 +10,78 @@
 
 module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+  var htmlTagCheck = function(source){
+    var result = [];
+    var tagsArray = [];
+    var lines = source.split('\n');
+    for (var x = 0; x < lines.length; x++){
+        var tagsArray = lines[x].match(/<(\/{1})?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)>/g);
+        if (tagsArray) {
+            for (var i = 0; i < tagsArray.length; i++) {
+                if (tagsArray[i].indexOf('</') >= 0) {
+                    elementToPop = tagsArray[i].substr(2, tagsArray[i].length-3);
+                    elementToPop = elementToPop.replace(/ /g, '');                                                             
+                    for (var j = result.length-1; j >= 0 ; j--) {
+                        if (result[j].element == elementToPop) {
+                            result.splice(j, 1);
+                            break;
+                        }
+                    }
+                } else {
+                    var tag = {};
+                    tag.full = tagsArray[i];
+                    tag.line = x+1;
+                    if (tag.full.indexOf(' ') > 0) {
+                        tag.element = tag.full.substr(1, tag.full.indexOf(' ')-1);
+                    } else {
+                        tag.element = tag.full.substr(1, tag.full.length-2);
+                    }
+                    var selfClosingTags = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+                    var isSelfClosing = false;
+                    for (var y = 0; y < selfClosingTags.length; y++) {
+                        if (selfClosingTags[y].localeCompare(tag.element) == 0) {
+                            isSelfClosing = true;
+                        }
+                    }
+                    if (isSelfClosing == false) {
+                        result.push(tag);
+                    }
+                }
+                
+            }
+        }
+    }
+    return result;
+  }
 
   grunt.registerMultiTask('html_test', 'For html tags check.', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
-    });
+    var options = this.options();
+    var files = this.filesSrc;
+    var errorCount = 0;
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
+    // check if there are files to test
+    if (this.files.length === 0) {
+      grunt.log.writeln('No files to check...');
+      grunt.log.ok();
+      return;
+    }else{
+      this.files.forEach(function(filepath){
+        grunt.log.writeln('-----------------------------------------------');
+        var errors = htmlTagCheck(grunt.file.read(filepath));
+        if (errors.length===0) {
+          grunt.log.writeln('√ ' + filepath);
+        } else{
+          errorCount++;
+          grunt.log.error('× ' + filepath);
+          errors.forEach(function(error){
+            grunt.log.error('Line ' + error.line + ':' + error.full);
+          });
+        };
+      });
+    }
 
-      // Handle options.
-      src += options.punctuation;
+    if (errorCount > 0) { return false; }
 
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
   });
 
 };

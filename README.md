@@ -56,28 +56,10 @@ In this example, the default options are used to do something with whatever. So 
 
 ```js
 grunt.initConfig({
-  html_test: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  html_test: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
+  html_test:{
+    test: {
+          src: ['demo/**/*.html']
+      }
   },
 });
 ```

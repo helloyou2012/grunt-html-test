@@ -72,9 +72,9 @@ module.exports = function(grunt) {
           grunt.log.writeln(('✔ ' + filepath).green);
         } else{
           errorCount++;
-          grunt.log.error(('✗ ' + filepath).red);
+          grunt.log.writeln(('✗ ' + filepath).red);
           errors.forEach(function(error){
-            grunt.log.error(('Line ' + error.line + ':' + error.full).red);
+            grunt.log.writeln(('# Line ' + error.line + ' : ' + error.full).red);
           });
         }
       });

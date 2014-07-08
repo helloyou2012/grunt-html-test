@@ -74,7 +74,7 @@ module.exports = function(grunt) {
           errorCount++;
           grunt.log.writeln(('✗ ' + filepath).red);
           errors.forEach(function(error){
-            grunt.log.writeln(('\t➜ ' + error.line + '# ' + error.full).red);
+            grunt.log.writeln(('  ➜ ' + error.line + '# ' + error.full).red);
           });
         }
       });

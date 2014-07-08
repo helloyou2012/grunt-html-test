@@ -80,7 +80,7 @@ module.exports = function(grunt) {
       });
     }
     
-    if (errorCount > 0) { return false; }
+    if (errorCount > 0 && !options.skip) { return false; }
 
   });
 

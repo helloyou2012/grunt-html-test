@@ -37,17 +37,11 @@ grunt.initConfig({
 
 ### Options
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
+#### options.skip
+Type: `bool`
+Default value: `false`
 
-A string value that is used to do something with whatever.
-
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
-
-A string value that is used to do something else with whatever else.
+If you set it `true`, it will skip the error just print the errors.
 
 ### Usage Examples
 
@@ -57,9 +51,12 @@ In this example, the default options are used to do something with whatever. So 
 ```js
 grunt.initConfig({
   html_test:{
+    options: {
+      skip: true
+    },
     test: {
-          src: ['demo/**/*.html']
-      }
+      src: ['demo/**/*.html']
+    }
   },
 });
 ```
